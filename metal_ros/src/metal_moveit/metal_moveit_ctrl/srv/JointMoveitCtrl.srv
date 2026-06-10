@@ -1,0 +1,9 @@
+# JointMoveitCtrl.srv
+float64[6] joint_states  # Joint angles in radians
+float64 gripper # Gripper opening width
+float64[7] joint_endpose # End-effector pose command (quaternion)
+float64 max_velocity # Maximum velocity
+float64 max_acceleration # Maximum acceleration
+---
+int64 error_code
+bool status

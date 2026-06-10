@@ -1,0 +1,22 @@
+<launch>
+  <arg name="model" />
+  <arg name="rviz_config" default="$(find metal_description)/rviz/metal_no_gripper.rviz" />
+  <param
+    name="robot_description"
+    textfile="$(find metal_description)/urdf/metal_no_gripper.urdf" />
+  <node
+    name="joint_state_publisher_gui"
+    pkg="joint_state_publisher_gui"
+    type="joint_state_publisher_gui">
+    <param name="rate" type="double" value="5.0" />
+  </node>
+  <node
+    name="$(anon robot_state_publisher)"
+    pkg="robot_state_publisher"
+    type="robot_state_publisher" />
+  <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz"
+    args="-d $(arg rviz_config)" />
+</launch>

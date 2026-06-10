@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>metal_controller</name>
+  <version>0.0.0</version>
+  <description>Metal arm controller package</description>
+
+  <maintainer email="601081321@qq.com">xiaofan zhang</maintainer>
+  <license>Business</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>metal_msg</build_depend>
+
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>roslib</build_export_depend>
+  <build_export_depend>metal_msg</build_export_depend>
+
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>roslib</exec_depend>
+  <exec_depend>metal_msg</exec_depend>
+
+</package>

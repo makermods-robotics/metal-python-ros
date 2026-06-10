@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: metal_description
+    relative_path: urdf/metal_with_gripper.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/metal.srdf
+  CONFIG:
+    author_name: makermods
+    author_email: support@makermods.com
+    generated_timestamp: 1761310835

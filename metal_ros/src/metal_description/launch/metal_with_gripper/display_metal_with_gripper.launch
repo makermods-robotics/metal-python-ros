@@ -1,0 +1,28 @@
+<launch>
+  <arg name="model" />
+  <arg name="rviz_config" default="$(find metal_description)/rviz/metal_with_gripper.rviz" />
+  <param
+    name="robot_description"
+    textfile="$(find metal_description)/urdf/metal_with_gripper.urdf" />
+
+  <!-- <arg name="jnt_stat_source" default="[/joint_states_origin]" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <rosparam param="/source_list" subst_value="True">$(arg jnt_stat_source)</rosparam>
+  </node> -->
+
+  <node
+    name="joint_state_publisher_gui"
+    pkg="joint_state_publisher_gui"
+    type="joint_state_publisher_gui">
+    <param name="rate" type="double" value="5.0" />
+  </node>
+  <node
+    name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="robot_state_publisher" />
+  <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz"
+    args="-d $(arg rviz_config)" />
+</launch>
