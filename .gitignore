@@ -1,0 +1,16 @@
+metal_sdk/build/
+metal_sdk/metal_sdk/metal_sdk.cpython-38-x86_64-linux-gnu.so
+metal_sdk/metal_sdk.egg-info
+metal_sdk/metal_sdk/__pycache__
+
+metal_ros2/build/
+metal_ros2/devel/
+metal_ros2/install/
+metal_ros2/data/
+metal_ros2/log/
+metal_ros2/*bag
+metal_ros2/.catkin_workspace
+metal_ros2/src/CMakeLists.txt
+metal_ros2/src/metal_teach_mode/normal_mode/__pycache__
+metal_ros2/src/metal_teach_mode/teach_pose/__pycache__
+metal_ros2/src/metal_teach_mode/teach_trajectory/__pycache__

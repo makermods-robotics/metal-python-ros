@@ -1,0 +1,7 @@
+# MANIFEST.in
+include README.md
+include LICENSE
+include metal_sdk_interface.cpp
+include metal_sdk/metal_sdk_interface.h
+
+recursive-include metal_sdk/lib *.so

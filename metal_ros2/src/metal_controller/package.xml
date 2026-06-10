@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypelayout="1.0"?>
+<package format="3">
+  <name>metal_controller</name>
+  <version>0.0.0</version>
+  <description>Metal arm controller package</description>
+  <maintainer email="601081321@qq.com">xiaofan zhang</maintainer>
+  <license>Business</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>metal_msg</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
