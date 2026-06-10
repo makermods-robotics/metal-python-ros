@@ -14,3 +14,5 @@ metal_ros2/src/CMakeLists.txt
 metal_ros2/src/metal_teach_mode/normal_mode/__pycache__
 metal_ros2/src/metal_teach_mode/teach_pose/__pycache__
 metal_ros2/src/metal_teach_mode/teach_trajectory/__pycache__
+
+sdk底层库/
