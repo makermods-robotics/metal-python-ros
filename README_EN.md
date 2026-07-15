@@ -1,11 +1,11 @@
-# metal_arm_ros
+# metal-python-ros
 
 MakerMods Metal arm ROS 2 (Humble) workspace. Native C++/Python driver (ROS1 dependency removed) plus MoveIt support.
 
 ## Layout
 
 ```
-metal_arm_ros/
+metal-python-ros/
 ├── scripts/                    # CAN bring-up scripts, control example scripts, install_deps.sh
 ├── docs/
 │   └── metal_sdk_known_limitations.md   # metal_sdk known limitations (read before use)
@@ -50,7 +50,7 @@ Note: `import metal_sdk` requires ROS to be sourced first (`source /opt/ros/humb
 ### 4. Build the ROS 2 packages
 
 ```bash
-cd ~/makermods/metal_arm_ros && colcon build
+cd ~/makermods/metal-python-ros && colcon build
 ```
 
 This builds the 4 ROS 2 packages: `metal_arm_msgs`, `metal_arm_description`, `metal_arm_driver`, `metal_arm_moveit_config` (`metal_sdk` was already built separately in step 3; colcon will touch it again here but that is idempotent).
@@ -60,7 +60,7 @@ This builds the 4 ROS 2 packages: `metal_arm_msgs`, `metal_arm_description`, `me
 Source the overlay, then launch one of the driver launch files:
 
 ```bash
-source ~/makermods/metal_arm_ros/install/setup.bash && ros2 launch metal_arm_driver one_master.launch.py
+source ~/makermods/metal-python-ros/install/setup.bash && ros2 launch metal_arm_driver one_master.launch.py
 ```
 
 Available launch files (under `src/metal_arm_driver/launch/`):

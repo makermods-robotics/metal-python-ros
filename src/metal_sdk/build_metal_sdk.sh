@@ -6,7 +6,7 @@ set -eo pipefail
 set +u
 source /opt/ros/humble/setup.bash
 set -u
-WS=~/makermods/metal_arm_ros
+WS="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"
 ARCH=$(uname -m)
 case "$ARCH" in
   x86_64|AMD64)   ARCHDIR=x64;   LIBNAME=libmetal_sdk_x64.so;;

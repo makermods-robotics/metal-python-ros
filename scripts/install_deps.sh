@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# metal_arm_ros: 一键安装系统依赖（需要 sudo）
+# metal-python-ros: 一键安装系统依赖（需要 sudo）
 set -euo pipefail
 
 sudo apt update
@@ -10,4 +10,4 @@ sudo apt install -y liburdfdom-dev liburdfdom-headers-dev liburdfdom-tools pytho
 # --- GUI / 运行时（RViz、MoveIt 可视化与规划，非编译强制依赖） ---
 sudo apt install -y ethtool ros-humble-xacro ros-humble-rviz2 ros-humble-moveit
 
-echo "metal_arm_ros deps installed."
+echo "metal-python-ros deps installed."

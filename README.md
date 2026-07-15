@@ -1,11 +1,11 @@
-# metal_arm_ros
+# metal-python-ros
 
 MakerMods Metal 机械臂 ROS 2 (Humble) 工作区。原生 C++/Python（去 ROS1 依赖）驱动 + MoveIt 支持。
 
 ## 目录结构
 
 ```
-metal_arm_ros/
+metal-python-ros/
 ├── scripts/                    # CAN 激活脚本、控制示例脚本、install_deps.sh
 ├── docs/
 │   └── metal_sdk_known_limitations.md   # metal_sdk 已知局限（务必先读）
@@ -50,7 +50,7 @@ bash src/metal_sdk/build_metal_sdk.sh
 ### 4. 构建 ROS 2 包
 
 ```bash
-cd ~/makermods/metal_arm_ros && colcon build
+cd ~/makermods/metal-python-ros && colcon build
 ```
 
 这一步构建 4 个 ROS 2 包：`metal_arm_msgs`、`metal_arm_description`、`metal_arm_driver`、`metal_arm_moveit_config`（`metal_sdk` 已在第 3 步单独构建过，此处会被再次触及但已是幂等的）。
@@ -60,7 +60,7 @@ cd ~/makermods/metal_arm_ros && colcon build
 先 `source install/setup.bash`，再任选一个 launch 文件启动驱动节点：
 
 ```bash
-source ~/makermods/metal_arm_ros/install/setup.bash && ros2 launch metal_arm_driver one_master.launch.py
+source ~/makermods/metal-python-ros/install/setup.bash && ros2 launch metal_arm_driver one_master.launch.py
 ```
 
 可用的 launch 文件（均位于 `src/metal_arm_driver/launch/`）：
