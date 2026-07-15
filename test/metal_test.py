@@ -107,8 +107,17 @@ def cmd_hold(args):
     print("holding at:", [round(x, 3) for x in q])
     arm.SetArmControlMode(ControlMode.NRT_JOINT_POSITION)
     arm.SetArmJointPosition(q, 1)  # velocity_ratio=1 (slowest)
-    time.sleep(3.0)
-    print("now at    :", [round(x, 3) for x in arm.GetJointPosition()[:6]])
+    print("\nHolding position (rigid). 'drift' = deviation from the commanded pose;")
+    print("small/steady drift means it's holding well. SUPPORT the arm, then Ctrl-C")
+    print("to release (it returns to gravity-comp, which does NOT fully hold weight).\n")
+    try:
+        while True:
+            cur = arm.GetJointPosition()
+            drift = max(abs(cur[i] - q[i]) for i in range(6))
+            print("drift=%.4f  q=%s" % (drift, [round(x, 3) for x in cur[:6]]))
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        print("\nreleasing.")
     safe_park(arm)
 
 
