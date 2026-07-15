@@ -17,14 +17,6 @@
 ## 跨架构 (Cross-arch)
 - **trac_ik 静态库仅支持 x86-64**：`src/metal_sdk/native/third_lib/trac_ik_lib/lib/libtrac_ik_lib.a` 是 x86-64-only 的预编译静态库，不含 arm64 切片。在 Jetson（arm64）上构建 `metal_sdk` 会在链接阶段失败，除非获得该库的 arm64 构建版本。此结论已在 Task 2 中通过 `file`/`lipo` 检查确认。
 
-## Jetson arm64 验收（待办）
-
-x64 已全量验收通过（干净构建 5 包 + import/接口/节点冒烟）。Jetson arm64 尚未验收，需在 Jetson 上：
-
-1. `bash scripts/install_deps.sh` 装依赖；`bash src/metal_sdk/build_metal_sdk.sh` 现编原生库（产出 `libmetal_sdk_arm64.so`）+ 绑定；`colcon build`。
-2. **阻塞项**：vendored `third_lib/trac_ik_lib/lib/libtrac_ik_lib.a` 仅 x86-64（见上「跨架构」节），Jetson 链接前需先取得/编译 arm64 版 trac_ik。
-3. **真臂行为一致性**：本次 SDK 清理为表面级（仅注释/改名，未改逻辑），但「行为与清理前完全一致」只能在真臂上跑 joint/end-pose 对比最终确认。
-
 来源仓库存档：旧集成 `metal-python-ros` 已推送 GitHub `makermods-robotics/metal-python-ros`（含未移植的 metal_gazebo / metal_teach_mode / docker），需要时可 clone 找回。
 
 ## 重力补偿静态托不住（2026-07-15 实机排查根因）
