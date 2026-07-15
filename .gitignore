@@ -12,3 +12,5 @@ src/metal_sdk/**/__pycache__/
 # python
 __pycache__/
 *.pyc
+# SDD scratch
+.superpowers/

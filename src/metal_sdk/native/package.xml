@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>metal_sdk</name>
+  <version>0.0.0</version>
+  <description>The metal_sdk_ubuntu22_04 package</description>
+
+  <maintainer email="601081321@qq.com">xiaofan zhang</maintainer>
+  <license>Business</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>kdl_parser</depend>
+  <depend>orocos_kdl</depend>
+  <depend>urdf</depend>
+  <depend>urdfdom_headers</depend>
+  <depend>urdfdom</depend>
+
+  <!-- 或者如果是从源码编译的 -->
+  <build_depend>trac_ik_lib</build_depend>
+  <exec_depend>trac_ik_lib</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>
