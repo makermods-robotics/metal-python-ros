@@ -1,0 +1,14 @@
+# colcon
+build/
+install/
+log/
+# SDK 构建产物
+src/metal_sdk/**/lib/x64/*.so
+src/metal_sdk/**/lib/arm64/*.so
+src/metal_sdk/**/*.so
+src/metal_sdk/**/build/
+src/metal_sdk/**/*.egg-info/
+src/metal_sdk/**/__pycache__/
+# python
+__pycache__/
+*.pyc
