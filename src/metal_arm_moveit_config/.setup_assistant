@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: metal_arm_description
+    relative_path: urdf/metal_with_gripper.urdf
+  srdf:
+    relative_path: config/metal.srdf
+  package_settings:
+    author_name: makermods
+    author_email: support@makermods.com
+    generated_timestamp: 1773807200
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
