@@ -70,6 +70,9 @@ class CanManager {
 
   std::array<double, 6> GetArmEndPose();
 
+  std::vector<double> ComputeGravityTorque(
+      const std::vector<double>& joint_position);
+
   void SetArmControlMode(int mode);
 
   void SetArmJointPosition(const std::array<double, 6>& arm_joint_position,

@@ -370,6 +370,13 @@ std::vector<double> CanManager::GetJointEffort() {
  * @brief current end-effector pose (xyz+rpy), computed from the current
  * joint positions via forward kinematics.
  */
+std::vector<double> CanManager::ComputeGravityTorque(
+    const std::vector<double>& joint_position) {
+  std::vector<double> gravity_torque;
+  kdl_solver_.GravityCompensation(joint_position, gravity_torque);
+  return gravity_torque;
+}
+
 std::array<double, 6> CanManager::GetArmEndPose() {
   std::array<double, 6> arm_joint_position;
   {

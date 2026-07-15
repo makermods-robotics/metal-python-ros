@@ -19,10 +19,22 @@ import time
 from metal_sdk import MetalSDKInterface, ControlMode
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-URDF = os.path.abspath(os.path.join(
-    HERE, "..", "src", "metal_arm_driver", "urdf", "metal_no_gripper.urdf"))
+URDF_DIR = os.path.abspath(os.path.join(
+    HERE, "..", "src", "metal_arm_driver", "urdf"))
 CAN = "can0"
-END_TYPE = 0  # 0 = no gripper
+# set by --gripper in main(); default = no gripper
+END_TYPE = 0
+URDF = os.path.join(URDF_DIR, "metal_no_gripper.urdf")
+
+
+def set_config(gripper):
+    """Select end_type + urdf. gripper=True -> arm_end_type=1, with_gripper urdf
+    (Link6 carries the gripper mass, so the gravity model includes it)."""
+    global END_TYPE, URDF
+    END_TYPE = 1 if gripper else 0
+    URDF = os.path.join(
+        URDF_DIR,
+        "metal_with_gripper.urdf" if gripper else "metal_no_gripper.urdf")
 
 
 def confirm(msg, yes):
@@ -111,12 +123,18 @@ def cmd_hold(args):
     print("\nHolding position (rigid). 'drift' = deviation from the commanded pose;")
     print("small/steady drift means it's holding well. SUPPORT the arm, then Ctrl-C")
     print("to release (it returns to gravity-comp, which does NOT fully hold weight).\n")
+    print("Comparing the MODEL gravity G(q) vs the ACTUAL holding torque (eff).")
+    print("If eff >> G, the model under-predicts the load (magnitude/scaling issue).\n")
     try:
         while True:
             cur = arm.GetJointPosition()
+            g = arm.ComputeGravityTorque(list(cur)[:6])
+            eff = arm.GetJointEffort()
             drift = max(abs(cur[i] - q[i]) for i in range(6))
-            print("drift=%.4f  q=%s" % (drift, [round(x, 3) for x in cur[:6]]))
-            time.sleep(0.5)
+            print("drift=%.3f" % drift)
+            print("  model G :", [round(x, 2) for x in g[:6]])
+            print("  eff act :", [round(x, 2) for x in eff[:6]], "(holding torque)")
+            time.sleep(0.6)
     except KeyboardInterrupt:
         print("\nreleasing.")
     safe_park(arm)
@@ -143,7 +161,7 @@ def cmd_move(args):
 def main():
     p = argparse.ArgumentParser(description="Metal arm hardware tests")
     sub = p.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("read").set_defaults(func=cmd_read)
+    r = sub.add_parser("read"); r.set_defaults(func=cmd_read)
     g = sub.add_parser("gravity"); g.set_defaults(func=cmd_gravity)
     h = sub.add_parser("hold"); h.set_defaults(func=cmd_hold)
     m = sub.add_parser("move"); m.set_defaults(func=cmd_move)
@@ -151,7 +169,11 @@ def main():
     m.add_argument("--delta", type=float, default=0.15, help="radians (default 0.15 ~8.6deg)")
     for s in (g, h, m):
         s.add_argument("--yes", action="store_true", help="skip the confirm prompt")
+    for s in (r, g, h, m):
+        s.add_argument("--gripper", action="store_true",
+                       help="arm has a gripper (end_type=1 + with_gripper urdf)")
     args = p.parse_args()
+    set_config(args.gripper)
     args.func(args)
 
 

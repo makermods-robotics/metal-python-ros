@@ -86,6 +86,11 @@ class MetalSDKInterface::Impl {
     return can_manager_->GetArmEndPose();
   }
 
+  std::vector<double> ComputeGravityTorque(
+      const std::vector<double>& joint_position) {
+    return can_manager_->ComputeGravityTorque(joint_position);
+  }
+
   /**
    * @brief set arm control mode. (0: go_zero, 1: gravity compensation)
    */
@@ -183,6 +188,11 @@ std::vector<double> MetalSDKInterface::GetJointEffort() {
 
 std::array<double, 6> MetalSDKInterface::GetArmEndPose() {
   return pimpl_->GetArmEndPose();
+}
+
+std::vector<double> MetalSDKInterface::ComputeGravityTorque(
+    const std::vector<double>& joint_position) {
+  return pimpl_->ComputeGravityTorque(joint_position);
 }
 
 void MetalSDKInterface::SetArmControlMode(const ControlMode& mode) {
