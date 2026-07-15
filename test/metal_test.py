@@ -92,9 +92,10 @@ def cmd_gravity(args):
     print("Press Ctrl-C to stop.\n")
     try:
         while True:
-            print("q:", [round(x, 3) for x in arm.GetJointPosition()],
-                  "| end:", [round(x, 3) for x in arm.GetArmEndPose()])
-            time.sleep(0.3)
+            print("q:  ", [round(x, 3) for x in arm.GetJointPosition()])
+            print("eff:", [round(x, 3) for x in arm.GetJointEffort()],
+                  "(motor actual torque)")
+            time.sleep(0.5)
     except KeyboardInterrupt:
         print("\nstopping.")
 
