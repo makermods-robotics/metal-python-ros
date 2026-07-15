@@ -1,1 +1,1 @@
-SUBSYSTEM=="tty", ATTRS{idVendor}=="ad50", ATTRS{idProduct}=="60c4", ATTRS{serial}=="003000274746570E20313333", SYMLINK+="makermods_metal_can0"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="ad50", ATTRS{idProduct}=="60c4", ATTRS{serial}=="003000364746570E20313333", SYMLINK+="makermods_metal_can0"
