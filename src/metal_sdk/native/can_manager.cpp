@@ -413,7 +413,7 @@ void CanManager::SetArmControlMode(int mode) {
     mode_ = "NRT_JOINT_POSITION";
     AINFO << "set non-real-time joint position control.";
   } else {
-    // NOTE(known-limitation): other control mode 未覆盖。见 docs/metal_sdk_known_limitations.md
+    // NOTE(known-limitation): other control mode 未覆盖。见 known-limitations 文档
     AWARN << "Invalid control mode : " << mode;
   }
 }
@@ -829,11 +829,11 @@ bool CanManager::WriteCanFrame(const can_frame& frame) const {
  */
 // NOTE(known-limitation): this function and KeepCurrentPostion() below are
 // implemented but not currently invoked from the control dispatch path
-// (no call site pre-write); see docs/metal_sdk_known_limitations.md.
+// (no call site pre-write); see known-limitations 文档.
 bool CanManager::IsCollisionDetected(
     std::vector<ControlCommand>& next_control_command) {
   const double kPositionThreshold = 0.05;
-  // NOTE(known-limitation): 速度条件暂时添加，缺 max vel/acc/jerk 限制。见 docs/metal_sdk_known_limitations.md
+  // NOTE(known-limitation): 速度条件暂时添加，缺 max vel/acc/jerk 限制。见 known-limitations 文档
   const double kVelocityZeroThreshold = 0.01;
   bool is_position_deviation = false;
   bool is_torque_overload = false;
@@ -906,7 +906,7 @@ void CanManager::KeepCurrentPostion(
     for (int i = 0; i < current_position.size(); i++) {
       // pos
       control_command.position = current_position.at(i);
-      // vel NOTE(known-limitation): 速度待定。见 docs/metal_sdk_known_limitations.md
+      // vel NOTE(known-limitation): 速度待定。见 known-limitations 文档
       if (i < 3) {
         control_command.velocity = 5.0;
       } else {
@@ -1327,7 +1327,7 @@ void CanManager::GenerateControlThread() {
             arm_control_index_ = 0;
             arm_control_trajectory_.clear();
 
-            // NOTE(known-limitation): add max vel and acc and jerk limit. 见 docs/metal_sdk_known_limitations.md
+            // NOTE(known-limitation): add max vel and acc and jerk limit. 见 known-limitations 文档
             double time;
             double max_delta_position = 0;
             for (int i = 0; i < 6; ++i) {

@@ -33,7 +33,7 @@ void DmMotorWriter::MitControl(can_frame& frame,
 
   // NOTE(known-limitation): joint soft limit only applied when
   // need_position_limit is set by the caller; not enforced unconditionally
-  // here. 见 docs/metal_sdk_known_limitations.md
+  // here. 见 known-limitations 文档
   float position_limit = control_command.position;
   if (need_position_limit) {
     position_limit =

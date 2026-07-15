@@ -366,7 +366,7 @@ bool KdlSolver::CoriolisTorque(const std::vector<double>& joint_positions,
     q_dot(i) = joint_vel[i];
   }
   // NOTE(known-limitation): 大模型说kdl的JntToCoriolis函数内部已经做了和q_ddot相乘的计算，
-  // 输出的coriolis就是科氏力和向心力矩项，这里需要确认一下。见 docs/metal_sdk_known_limitations.md
+  // 输出的coriolis就是科氏力和向心力矩项，这里需要确认一下。见 known-limitations 文档
   KDL::JntArray coriolis(kdl_chain_.getNrOfJoints());
   if (dyn_solver_->JntToCoriolis(q, q_dot, coriolis) < 0) {
     AERROR << "Failed to compute Coriolis torque";

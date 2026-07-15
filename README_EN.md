@@ -7,8 +7,6 @@ MakerMods Metal arm ROS 2 (Humble) workspace. Native C++/Python driver (ROS1 dep
 ```
 metal-python-ros/
 ├── scripts/                    # CAN bring-up scripts, control example scripts, install_deps.sh
-├── docs/
-│   └── metal_sdk_known_limitations.md   # metal_sdk known limitations (read before use)
 └── src/
     ├── metal_sdk/               # native lib + pybind11 binding (not a ROS package, builds separately)
     ├── metal_arm_msgs/          # ROS 2 message definitions
@@ -83,12 +81,10 @@ sudo bash scripts/start_can0.sh
 
 ### 6. Known limitations
 
-Read [`docs/metal_sdk_known_limitations.md`](docs/metal_sdk_known_limitations.md) before use — it documents substantive unfinished work carried over from TODOs in the SDK source (collision detection not wired into the control-dispatch path, velocity/jerk limits are placeholder values, joint soft limits are not unconditionally enforced, the trac_ik static library is x86-64-only, etc.).
+The SDK source carries substantive unfinished work (from TODOs) you should know before use: collision detection is not wired into the control-dispatch path, velocity/jerk limits are placeholder values, joint soft limits are not unconditionally enforced, the trac_ik static library is x86-64-only. Also, gravity compensation depends on the correct end-effector load config — **with a gripper you MUST use `arm_end_type=1` + the with_gripper urdf**, otherwise the model under-counts the end mass and under-compensates (the arm sags).
 
 ## 中文文档
 
 见 [README.md](README.md)。
 
 > Prerequisite: this machine already has ROS 2 Humble desktop and colcon installed (`ros-humble-desktop` / `python3-colcon-common-extensions`); `install_deps.sh` only adds this project's extra deps, not ROS itself.
-
-> How the C++ source works (architecture / build / API / how to modify): see `docs/metal_sdk_cpp_source_guide.md`.

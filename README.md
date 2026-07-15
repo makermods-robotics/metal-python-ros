@@ -7,8 +7,6 @@ MakerMods Metal 机械臂 ROS 2 (Humble) 工作区。原生 C++/Python（去 ROS
 ```
 metal-python-ros/
 ├── scripts/                    # CAN 激活脚本、控制示例脚本、install_deps.sh
-├── docs/
-│   └── metal_sdk_known_limitations.md   # metal_sdk 已知局限（务必先读）
 └── src/
     ├── metal_sdk/               # native 库 + pybind11 绑定（非 ROS 包，需单独构建）
     ├── metal_arm_msgs/          # ROS 2 消息定义
@@ -83,12 +81,10 @@ sudo bash scripts/start_can0.sh
 
 ### 6. 已知局限
 
-务必在使用前阅读 [`docs/metal_sdk_known_limitations.md`](docs/metal_sdk_known_limitations.md)，其中记录了从 SDK 源码 TODO 分流出的实质性未完成功能（碰撞检测未接入控制下发路径、速度/加加速度限制为临时值、关节软限位非无条件生效、trac_ik 静态库仅支持 x86-64 等）。
+SDK 源码存在若干从 TODO 分流出的实质性未完成功能，使用前需知悉：碰撞检测未接入控制下发路径、速度/加加速度限制为临时值、关节软限位非无条件生效、trac_ik 静态库仅支持 x86-64；此外重力补偿依赖正确的末端负载配置——**装夹爪必须用 `arm_end_type=1` + with_gripper urdf**，否则模型少算末端质量会欠补偿（悬停下沉）。
 
 ## 英文文档
 
 See [README_EN.md](README_EN.md) for the English version.
 
 > 前置假设：本机已安装 ROS 2 Humble desktop 及 colcon（`ros-humble-desktop` / `python3-colcon-common-extensions`）；`install_deps.sh` 只补充本项目额外依赖，不安装 ROS 本体。
-
-> C++ 底层源码怎么用（架构/编译/API/如何修改）见 `docs/metal_sdk_cpp_source_guide.md`。
