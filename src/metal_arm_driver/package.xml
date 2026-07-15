@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>metal_arm_driver</name>
+  <version>0.0.0</version>
+  <description>Metal arm driver node (metal_sdk backend)</description>
+  <maintainer email="dev@makermods.ai">MakerMods</maintainer>
+  <license>Business</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>metal_arm_msgs</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
