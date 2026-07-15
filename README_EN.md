@@ -90,3 +90,5 @@ Read [`docs/metal_sdk_known_limitations.md`](docs/metal_sdk_known_limitations.md
 见 [README.md](README.md)。
 
 > Prerequisite: this machine already has ROS 2 Humble desktop and colcon installed (`ros-humble-desktop` / `python3-colcon-common-extensions`); `install_deps.sh` only adds this project's extra deps, not ROS itself.
+
+> How the C++ source works (architecture / build / API / how to modify): see `docs/metal_sdk_cpp_source_guide.md`.

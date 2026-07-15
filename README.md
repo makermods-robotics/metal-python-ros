@@ -90,3 +90,5 @@ sudo bash scripts/start_can0.sh
 See [README_EN.md](README_EN.md) for the English version.
 
 > 前置假设：本机已安装 ROS 2 Humble desktop 及 colcon（`ros-humble-desktop` / `python3-colcon-common-extensions`）；`install_deps.sh` 只补充本项目额外依赖，不安装 ROS 本体。
+
+> C++ 底层源码怎么用（架构/编译/API/如何修改）见 `docs/metal_sdk_cpp_source_guide.md`。
