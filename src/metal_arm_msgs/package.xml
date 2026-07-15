@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>metal_arm_msgs</name>
+  <version>0.0.0</version>
+  <description>ROS 2 messages for the MakerMods Metal arm</description>
+  <maintainer email="dev@makermods.ai">MakerMods</maintainer>
+  <license>Business</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rosidl_default_generators</depend>
+  <depend>std_msgs</depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
