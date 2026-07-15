@@ -10,7 +10,7 @@
 #define RIGHT_BRACKET "]"
 
 #ifndef MODULE_NAME
-#define MODULE_NAME "y1"
+#define MODULE_NAME "metal_arm"
 #endif
 
 #define ADEBUG_MODULE(module) \
