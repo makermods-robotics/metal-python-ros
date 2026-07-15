@@ -88,3 +88,5 @@ sudo bash scripts/start_can0.sh
 ## 英文文档
 
 See [README_EN.md](README_EN.md) for the English version.
+
+> 前置假设：本机已安装 ROS 2 Humble desktop 及 colcon（`ros-humble-desktop` / `python3-colcon-common-extensions`）；`install_deps.sh` 只补充本项目额外依赖，不安装 ROS 本体。
