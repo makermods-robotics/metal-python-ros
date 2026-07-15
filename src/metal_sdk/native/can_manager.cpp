@@ -53,6 +53,8 @@ CanManager::~CanManager() {
   close(socket_);
 }
 
+// @brief bring up the kdl solver, CAN socket and per-motor reader/writer
+// objects, enable the arm and start the reader/control threads.
 bool CanManager::Init() {
   // init kdl solver
   if (!kdl_solver_.Init()) {
@@ -162,6 +164,7 @@ bool CanManager::Init() {
   return true;
 }
 
+// @brief create, bind and configure the raw CAN socket for can_id.
 bool CanManager::OpenCanDevice(const std::string& can_id) {
   // create socket
   socket_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -202,6 +205,8 @@ bool CanManager::OpenCanDevice(const std::string& can_id) {
   return true;
 }
 
+// @brief map gripper stroke distance (mm) to motor angle via the
+// calibrated distances_/angles_ lookup table (nearest-neighbor).
 double CanManager::distanceToAngle(double distance) const {
   // 边界判断
   if (distances_.empty()) return 0.0;
@@ -222,6 +227,8 @@ double CanManager::distanceToAngle(double distance) const {
   return angles_.back();
 }
 
+// @brief inverse of distanceToAngle: map motor angle to gripper stroke
+// distance (mm) via the calibrated lookup table.
 double CanManager::angleToDistance(double angle) const {
   // 边界判断
   if (angles_.empty()) return 0.0;
@@ -293,6 +300,8 @@ std::vector<double> CanManager::GetMotorCurrent() {
   return motor_current;
 }
 
+// @brief current joint positions (rad); gripper entry (if present) is
+// converted from motor angle to stroke distance via angleToDistance.
 std::vector<double> CanManager::GetJointPosition() {
   std::vector<double> joint_position;
   {
@@ -317,6 +326,7 @@ std::vector<double> CanManager::GetJointPosition() {
   return joint_position;
 }
 
+// @brief current joint velocities as reported by the motor readers.
 std::vector<double> CanManager::GetJointVelocity() {
   std::vector<double> joint_velocity;
   {
@@ -329,6 +339,7 @@ std::vector<double> CanManager::GetJointVelocity() {
   return joint_velocity;
 }
 
+// @brief current joint torque/effort as reported by the motor readers.
 std::vector<double> CanManager::GetJointEffort() {
   std::vector<double> joint_effort;
   {
@@ -341,6 +352,8 @@ std::vector<double> CanManager::GetJointEffort() {
   return joint_effort;
 }
 
+// @brief current end-effector pose (xyz+rpy), computed from the current
+// joint positions via forward kinematics.
 std::array<double, 6> CanManager::GetArmEndPose() {
   std::array<double, 6> arm_joint_position;
   {
@@ -357,6 +370,9 @@ std::array<double, 6> CanManager::GetArmEndPose() {
   return end_pose;
 }
 
+// @brief select the high-level arm mode: 0=gravity compensation (drag
+// teaching), 1=real-time joint position follow, 2=non-real-time joint
+// position with trajectory planning.
 void CanManager::SetArmControlMode(int mode) {
   // ControlMode
   if (mode == 0) {
@@ -372,11 +388,13 @@ void CanManager::SetArmControlMode(int mode) {
     mode_ = "NRT_JOINT_POSITION";
     AINFO << "set non-real-time joint position control.";
   } else {
-    // TODO: other control mode
+    // NOTE(known-limitation): other control mode 未覆盖。见 docs/metal_sdk_known_limitations.md
     AWARN << "Invalid control mode : " << mode;
   }
 }
 
+// @brief set target joint positions (clamped to soft limits) and follow
+// speed ratio for the normal (non-follow) arm control path.
 void CanManager::SetArmJointPosition(
     const std::array<double, 6>& arm_joint_position, int velocity_ratio) {
   {
@@ -467,6 +485,8 @@ void CanManager::SetArmJointPosition(
   }
 }
 
+// @brief set target end-effector pose; solves IK to joint positions and
+// forwards them to both the normal and follow control targets.
 void CanManager::SetArmEndPose(const std::array<double, 6>& arm_end_pose) {
   // arm Inverse Kinematics compute joint position.
   auto start_time = std::chrono::high_resolution_clock::now();
@@ -564,8 +584,11 @@ void CanManager::SetGripperStroke(double gripper_stroke, int velocity_ratio) {
   }
 }
 
+// @brief enable/disable all arm motors.
 void CanManager::SetEnableArm(bool enable_flag) { EnableArm(enable_flag); }
 
+// @brief persist the current J6 (wrist) position as the motor's zero
+// point; only allowed while the motor is disabled, for safety.
 void CanManager::SaveJ6ZeroPosition() {
   // 为了安全，必须要处于失能状态下，再保存位置零点
   if (!motor_readers_.at(5)->IsDisEnable()) {
@@ -582,6 +605,8 @@ void CanManager::SaveJ6ZeroPosition() {
   }
 }
 
+// @brief blocking read of one CAN frame and dispatch it to the matching
+// motor reader by CAN id.
 bool CanManager::RecvCanFrame(bool read_save_write) {
   struct can_frame frame;
   std::memset(&frame, 0, sizeof(frame));
@@ -612,6 +637,7 @@ bool CanManager::RecvCanFrame(bool read_save_write) {
   return true;
 }
 
+// @brief encode and send one MIT-mode (torque+pos+vel) control frame.
 void CanManager::MitControl(const std::shared_ptr<MotorWriterBase>& motor,
                             const ControlCommand& control_command,
                             bool need_position_limit) {
@@ -623,6 +649,7 @@ void CanManager::MitControl(const std::shared_ptr<MotorWriterBase>& motor,
   }
 }
 
+// @brief encode and send one position/velocity-mode control frame.
 void CanManager::PosVelControl(const std::shared_ptr<MotorWriterBase>& motor,
                                const ControlCommand& control_command,
                                bool need_position_limit) {
@@ -634,6 +661,8 @@ void CanManager::PosVelControl(const std::shared_ptr<MotorWriterBase>& motor,
   }
 }
 
+// @brief switch a single motor's low-level control mode (MIT/POS_VEL/VEL)
+// and read back the ack frame.
 void CanManager::SwitchControlMode(
     const std::shared_ptr<MotorWriterBase>& motor, ControlMode mode) {
   // write
@@ -657,6 +686,8 @@ void CanManager::SwitchControlMode(
   std::this_thread::sleep_for(std::chrono::microseconds(200));
 }
 
+// @brief enable or disable every arm motor in sequence; optionally waits
+// for a CAN ack per motor to confirm the link is alive.
 bool CanManager::EnableArm(bool enable, bool need_read) {
   for (int i = 0; i < motor_writers_.size(); i++) {
     can_frame frame;
@@ -688,6 +719,8 @@ bool CanManager::EnableArm(bool enable, bool need_read) {
   return true;
 }
 
+// @brief write one CAN frame to the socket; logs the errno-specific
+// failure reason (EINTR/EAGAIN/ENETDOWN/etc.) on short/failed writes.
 bool CanManager::WriteCanFrame(const can_frame& frame) const {
   int bytes = write(socket_, &frame, sizeof(struct can_frame));
   if (bytes != sizeof(frame)) {
@@ -745,10 +778,15 @@ bool CanManager::WriteCanFrame(const can_frame& frame) const {
   return true;
 }
 
+// @brief heuristic collision proxy: flags large position tracking error
+// or sustained per-motor/simultaneous torque overload.
+// NOTE(known-limitation): this function and KeepCurrentPostion() below are
+// implemented but not currently invoked from the control dispatch path
+// (no call site pre-write); see docs/metal_sdk_known_limitations.md.
 bool CanManager::IsCollisionDetected(
     std::vector<ControlCommand>& next_control_command) {
   const double kPositionThreshold = 0.05;
-  // TODO:速度条件暂时添加
+  // NOTE(known-limitation): 速度条件暂时添加，缺 max vel/acc/jerk 限制。见 docs/metal_sdk_known_limitations.md
   const double kVelocityZeroThreshold = 0.01;
   bool is_position_deviation = false;
   bool is_torque_overload = false;
@@ -793,6 +831,8 @@ bool CanManager::IsCollisionDetected(
   return is_position_deviation || is_torque_overload;
 }
 
+// @brief build a stop command list that holds the current joint position
+// (zero velocity/torque in MIT mode, or a fixed hold velocity otherwise).
 void CanManager::KeepCurrentPostion(
     const std::vector<double>& current_position, bool& is_mit_mode,
     std::vector<ControlCommand>& stop_control_command) {
@@ -817,7 +857,7 @@ void CanManager::KeepCurrentPostion(
     for (int i = 0; i < current_position.size(); i++) {
       // pos
       control_command.position = current_position.at(i);
-      // vel TODO:速度待定
+      // vel NOTE(known-limitation): 速度待定。见 docs/metal_sdk_known_limitations.md
       if (i < 3) {
         control_command.velocity = 5.0;
       } else {
@@ -828,6 +868,8 @@ void CanManager::KeepCurrentPostion(
   }
 }
 
+// @brief scan last-seen timestamps per motor id and report whether any
+// motor has gone silent past offline_max_threshold_.
 bool CanManager::CheckOfflineMotors() {
   auto now = Clock::now();
   bool result = false;
@@ -1234,7 +1276,7 @@ void CanManager::GenerateControlThread() {
             arm_control_index_ = 0;
             arm_control_trajectory_.clear();
 
-            // TODO: add max vel and acc and jerk limit
+            // NOTE(known-limitation): add max vel and acc and jerk limit. 见 docs/metal_sdk_known_limitations.md
             double time;
             double max_delta_position = 0;
             for (int i = 0; i < 6; ++i) {

@@ -109,7 +109,6 @@ class MetalSDKInterface::Impl {
   /**
    * @brief set arm end pose control command. (x y z roll pitch yaw)
    */
-  // TODO: std::vector to std::array?
   void SetArmEndPose(const std::array<double, 6>& arm_end_pose) {
     can_manager_->SetArmEndPose(arm_end_pose);
   }

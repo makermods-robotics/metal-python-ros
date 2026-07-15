@@ -47,7 +47,7 @@ void PayloadEstimator::UpdateMassRLS(const KDL::JntArray &q,
                                      const KDL::JntArray &tau) {
   KDL::JntArray coriolis(q.rows()), gravity(q.rows());
   KDL::JntSpaceInertiaMatrix inertia(q.rows());
-  // TODO: 待优化，避免重复计算前馈力矩
+  // NOTE(known-limitation): 待优化，避免重复计算前馈力矩。见 docs/metal_sdk_known_limitations.md
   dyn_solver_->JntToCoriolis(q, dq, coriolis);
   dyn_solver_->JntToGravity(q, gravity);
   dyn_solver_->JntToMass(q, inertia);
@@ -152,7 +152,7 @@ bool PayloadEstimator::ComputePayloadCompensation(
     return false;
   }
 
-  // TODO:先使用雅可比矩阵估算负载的方法
+  // NOTE(known-limitation): 先使用雅可比矩阵估算负载的方法，待优化。见 docs/metal_sdk_known_limitations.md
   // 将 std::vector 转换为 KDL::JntArray
   KDL::JntArray tau_kdl(cur_joint_tau.size());
   for (size_t i = 0; i < cur_joint_tau.size(); ++i) {
@@ -180,7 +180,8 @@ bool PayloadEstimator::ComputePayloadCompensation(
   return true;
 }
 
-// TODO:下一次指令下发前，检查是否发生碰撞，若发生碰撞，则保持当前位置
+// NOTE(known-limitation): 下一次指令下发前，检查是否发生碰撞，若发生碰撞，则保持当前位置（未实现）。
+// 见 docs/metal_sdk_known_limitations.md
 // if (IsCollisionDetected(control_command_vec)) {
 //   // 1.方案一：更新目标位置为当前位置
 //   std::vector<double> joint_positions = GetJointPosition();
