@@ -28,8 +28,10 @@ int sign(double x) {
 KdlSolver::KdlSolver(const std::string& urdf_file, int arm_end_type)
     : urdf_file_(urdf_file), arm_end_type_(arm_end_type) {}
 
-// @brief load URDF, build the KDL chain/solvers and the TRAC-IK/payload
-// estimator instances. Must be called before any other public method.
+/**
+ * @brief load URDF, build the KDL chain/solvers and the TRAC-IK/payload
+ * estimator instances. Must be called before any other public method.
+ */
 bool KdlSolver::Init() {
   // 加载 URDF 模型
   urdf::Model model;
@@ -113,7 +115,9 @@ bool KdlSolver::Init() {
   return true;
 }
 
-// @brief forward kinematics: joint positions -> end effector pose (xyz+rpy).
+/**
+ * @brief forward kinematics: joint positions -> end effector pose (xyz+rpy).
+ */
 bool KdlSolver::FkSolver(const std::array<double, 6>& joint_positions,
                          std::array<double, 6>& end_pose) {
   KDL::Frame out_pose;
@@ -141,8 +145,10 @@ bool KdlSolver::FkSolver(const std::array<double, 6>& joint_positions,
   return true;
 }
 
-// @brief inverse kinematics via TRAC-IK, seeded from init_joint_positions.
-// @return false if no reachable solution is found.
+/**
+ * @brief inverse kinematics via TRAC-IK, seeded from init_joint_positions.
+ * @return false if no reachable solution is found.
+ */
 bool KdlSolver::IkSolverWithTracIK(
     const std::array<double, 6>& arm_end_pose,
     const std::array<double, 6>& init_joint_positions,
@@ -173,8 +179,10 @@ bool KdlSolver::IkSolverWithTracIK(
   return true;
 }
 
-// @brief run TRAC-IK's CartToJnt in a forked child process with a timeout,
-// so a hung/divergent IK solve cannot block the caller indefinitely.
+/**
+ * @brief run TRAC-IK's CartToJnt in a forked child process with a timeout,
+ * so a hung/divergent IK solve cannot block the caller indefinitely.
+ */
 int KdlSolver::SafeCartToJnt(const KDL::JntArray& q_init,
                              const KDL::Frame& desired_pose,
                              KDL::JntArray& q_result, int timeout_sec) {
@@ -260,8 +268,10 @@ int KdlSolver::SafeCartToJnt(const KDL::JntArray& q_init,
   return rc;
 }
 
-// @brief compute feedforward joint torque (gravity + coriolis + friction)
-// for the current joint state.
+/**
+ * @brief compute feedforward joint torque (gravity + coriolis + friction)
+ * for the current joint state.
+ */
 bool KdlSolver::FeedforwardTorqueCompensation(
     const std::vector<double>& current_joint_position,
     const std::vector<double>& current_joint_velocity,
@@ -313,7 +323,9 @@ bool KdlSolver::FeedforwardTorqueCompensation(
   return true;
 }
 
-// @brief inertial joint torque M(q)*q_ddot.
+/**
+ * @brief inertial joint torque M(q)*q_ddot.
+ */
 bool KdlSolver::InertiaTorque(const std::vector<double>& joint_positions,
                               const std::vector<double>& joint_acc,
                               std::vector<double>& inertia_torque) {
@@ -341,7 +353,9 @@ bool KdlSolver::InertiaTorque(const std::vector<double>& joint_positions,
   return true;
 }
 
-// @brief coriolis/centripetal joint torque via KDL::JntToCoriolis.
+/**
+ * @brief coriolis/centripetal joint torque via KDL::JntToCoriolis.
+ */
 bool KdlSolver::CoriolisTorque(const std::vector<double>& joint_positions,
                                const std::vector<double>& joint_vel,
                                std::vector<double>& coriolis_torque) {
@@ -367,7 +381,9 @@ bool KdlSolver::CoriolisTorque(const std::vector<double>& joint_positions,
   return true;
 }
 
-// @brief gravity compensation joint torque (std::array overload).
+/**
+ * @brief gravity compensation joint torque (std::array overload).
+ */
 bool KdlSolver::GravityCompensation(
     const std::array<double, 6>& joint_positions,
     std::array<double, 6>& gravity_torque) {
@@ -390,7 +406,9 @@ bool KdlSolver::GravityCompensation(
   return true;
 }
 
-// @brief gravity compensation joint torque (std::vector overload).
+/**
+ * @brief gravity compensation joint torque (std::vector overload).
+ */
 bool KdlSolver::GravityCompensation(const std::vector<double>& joint_positions,
                                     std::vector<double>& gravity_torque) {
   size_t dof = joint_positions.size();
@@ -414,7 +432,9 @@ bool KdlSolver::GravityCompensation(const std::vector<double>& joint_positions,
   return true;
 }
 
-// @brief viscous/static friction torque estimate from joint velocity.
+/**
+ * @brief viscous/static friction torque estimate from joint velocity.
+ */
 void KdlSolver::ComputeFriction(const std::vector<double>& joint_velocity,
                                 std::vector<double>& friction_torque) {
   friction_torque.resize(joint_velocity.size());
@@ -447,7 +467,9 @@ void KdlSolver::ComputeFriction(const std::vector<double>& joint_velocity,
   }
 }
 
-// @brief external/payload torque estimate; delegates to PayloadEstimator.
+/**
+ * @brief external/payload torque estimate; delegates to PayloadEstimator.
+ */
 bool KdlSolver::ComputePayloadCompensation(
     std::vector<double> current_joint_position,
     std::vector<double> current_joint_tau,
@@ -461,7 +483,9 @@ bool KdlSolver::ComputePayloadCompensation(
   return true;
 }
 
-// @brief gripper friction torque compensation as a function of velocity.
+/**
+ * @brief gripper friction torque compensation as a function of velocity.
+ */
 double KdlSolver::GripperTorqueCompensation(double velocity, int gripper_type) {
   double stop_torque = 0.06;
   double static_friction_torque = 0.03;
