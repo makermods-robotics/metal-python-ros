@@ -32,6 +32,7 @@ setup(
             # Register the Python script as an executable node
             # name = module.path:main
             'metal_controller = metal_controller.metal_controller:main',
+            'star_arm_leader = metal_controller.star_arm_leader:main',
         ],
     },
 )

@@ -1,0 +1,42 @@
+star_arm_leader:
+  ros__parameters:
+    # USB-to-UART device of the Star Arm 102 leader (FashionStar smart servos)
+    port: '/dev/ttyUSB0'
+    baudrate: 1000000
+    # command publish frequency (HZ)
+    publish_rate: 100.0
+    # servo id of each joint, ordered [joint1..joint6, gripper]
+    joint_ids: [0, 1, 2, 3, 4, 5, 6]
+    # per-joint signed scale leader->follower (sign flips direction, magnitude rescales travel)
+    joint_directions: [-1.0, -1.0, -0.667, -1.0, 1.0, -1.0, 1.895]
+    # per-joint output range in degrees (matches the Metal follower joint limits)
+    joint_range_min: [-160.0, -180.0, 0.0, -123.0, -85.0, -145.0, -5.0]
+    joint_range_max: [160.0, 0.0, 180.0, 81.0, 85.0, 145.0, 115.0]
+    # topic the follower consumes joint position commands from
+    arm_joint_state_topic: '/master_arm_right/joint_states'
+    # follower feedback, used to start the slow startup sync from the follower's real pose
+    follower_joint_state_topic: '/puppet_arm_right/joint_states'
+    # slow startup sync: per-tick slew limit and convergence tolerance
+    startup_sync_step_deg: 0.6
+    startup_sync_step_mm: 1.0
+    startup_sync_tolerance_deg: 3.0
+    startup_sync_tolerance_mm: 5.0
+
+right_slave_arm:
+  ros__parameters:
+    # CAN ID
+    arm_can_id: 'can0'
+    # arm status and joint state feedback frequency (HZ)
+    arm_feedback_rate: 400
+    # arm control type: leader_arm(remote master arm), follower_arm(remote slave arm), normal_arm(normal control arm)
+    arm_control_type: 'follower_arm'
+    # 0: nothing, 1: gripper, 2: teaching pendant, 3: gripper and teaching pendant
+    arm_end_type: 3
+    # whether to enable robotic arm
+    auto_enable: true
+    # joint position control arm
+    arm_joint_position_control_topic: '/master_arm_right/joint_states'
+    # end pose and joint position feedback
+    arm_joint_state_topic: '/puppet_arm_right/joint_states'
+    # joint motor status feedback
+    arm_status_topic: '/puppet_arm_right/arm_status'

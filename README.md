@@ -88,6 +88,40 @@ Two leader/follower pairs:
 ros2 launch metal_controller two_master_slave.launch.py
 ```
 
+## Star Arm 102 as Leader (Alternative Teleop)
+
+Instead of a second Metal arm, the follower can be teleoperated with a Seeed Studio
+Star Arm 102 / reBot Arm 102 leader — a low-cost 7-joint leader arm on FashionStar UART
+smart servos, connected over USB serial (default `/dev/ttyUSB0`). The Metal
+leader/follower launches above are unchanged; this is an additional option.
+
+Install the servo driver into the Python used by ROS, and make sure your user can
+open the serial port (member of the `dialout` group; re-login after adding):
+
+```bash
+python3 -m pip install 'motorbridge-smart-servo>=0.0.4,<0.1.0'
+sudo usermod -aG dialout $USER   # only needed once
+```
+
+Launch the Star Arm leader with a Metal follower on `can0` (bring the CAN interface
+up first, e.g. `scripts/start_can0.sh`):
+
+```bash
+ros2 launch metal_controller star_master_slave.launch.py
+```
+
+The `star_arm_leader` node reads the leader servos, maps them onto the Metal joint
+convention (per-joint direction/scale and ranges, configured in
+`metal_controller/config/star_master_slave.yaml`), and publishes `ArmJointState`
+commands (`[J1..J6 rad, gripper stroke mm]`) on `/master_arm_right/joint_states`
+for the standard follower node. On startup it slowly slews the follower from its
+current pose to the leader pose before tracking at full speed.
+
+Servo zero points are stored inside the servos themselves. To (re)zero the leader,
+hold it in its zero pose and set the origin point of each servo (for example with the
+LeRobot `rebot_102_leader` calibration flow, or the FashionStar tooling); this node
+does not perform calibration.
+
 ## Topic Control Examples
 
 Send a joint-position command:
