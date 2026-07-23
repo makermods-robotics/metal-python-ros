@@ -1,4 +1,9 @@
 metal_sdk/build/
+metal_sdk/install/
+metal_sdk/log/
+metal_sdk/binding/build/
+metal_sdk/binding/metal_sdk.egg-info/
+metal_sdk/metal_sdk/lib/**/*.so
 metal_sdk/metal_sdk/metal_sdk.cpython-38-x86_64-linux-gnu.so
 metal_sdk/metal_sdk.egg-info
 metal_sdk/metal_sdk/__pycache__

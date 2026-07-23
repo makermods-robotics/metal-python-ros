@@ -80,6 +80,15 @@ class MetalSDKInterface {
   std::array<double, 6> GetArmEndPose();
 
   /**
+   * @brief compute the model gravity torque G(q) at an ARBITRARY joint pose,
+   * without energizing the arm. For gravity-comp calibration / direction check.
+   * @param joint_position 6 joint angles (rad), base->tip (J1..J6).
+   * @return 6 gravity torques (Nm) predicted by the URDF model.
+   */
+  std::vector<double> ComputeGravityTorque(
+      const std::vector<double>& joint_position);
+
+  /**
    * @brief set arm control mode. (0: GRAVITY_COMPENSATION, 1:
    * RT_JOINT_POSITION, 2: NRT_JOINT_POSITION)
    */

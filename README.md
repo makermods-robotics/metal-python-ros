@@ -10,9 +10,9 @@ The original Chinese README from the imported upstream branch is preserved as `R
 
 - Ubuntu 22.04 LTS
 - ROS 2 Humble
-- Linux x86_64 native SDK binary
 
-The Python package setup script contains an arm64 selection path, but this branch only includes `metal_sdk/metal_sdk/lib/x64/libmetal_sdk_x64.so`. arm64/aarch64 support requires a compatible `libmetal_sdk_arm64.so` from MakerMods or a rebuilt SDK.
+The native SDK is built from source (`metal_sdk/native/`, a colcon package), so both
+x86_64 and arm64/aarch64 are supported — no prebuilt binary is required.
 
 ## Dependencies
 
@@ -39,14 +39,18 @@ bash can_scripts/start_can0.sh
 
 Multi-arm setups use `can0` through `can3`; see the scripts in `metal_ros2/can_scripts/`.
 
-## Install the Python SDK
+## Build and Install the Python SDK
+
+One command builds the native SDK from source and installs the Python binding:
 
 ```bash
-cd metal_sdk/
-pip install .
+bash metal_sdk/build_metal_sdk.sh
 ```
 
-The Python package exposes `MetalSDKInterface` and `ControlMode`. The hardware-control implementation is inside the bundled native shared library.
+This runs colcon on `metal_sdk/native/` (producing `libmetal_sdk_<arch>.so`), copies
+the library into the Python package, and pip-installs the pybind11 binding. The
+package exposes `MetalSDKInterface` and `ControlMode`. See `metal_sdk/build_sdk.md`
+for details and manual steps.
 
 ## Build the ROS 2 Workspace
 

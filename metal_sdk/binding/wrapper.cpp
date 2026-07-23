@@ -5,7 +5,7 @@
 #include <pybind11/stl.h>  // std::vector support
 // Include numpy.h or buffer.h if numpy arrays or buffers are needed
 
-#include "metal_sdk/metal_sdk_interface.h"
+#include "metal_sdk_interface.h"
 
 namespace py = pybind11;
 
@@ -54,6 +54,10 @@ PYBIND11_MODULE(metal_sdk, m) {
            "Joint torques / efforts.")
       .def("GetArmEndPose", &makermods::metal::MetalSDKInterface::GetArmEndPose,
            "End pose of the arm: [x, y, z, roll, pitch, yaw]")
+      .def("ComputeGravityTorque",
+           &makermods::metal::MetalSDKInterface::ComputeGravityTorque,
+           "Model gravity torque G(q) at a given pose (no energizing).",
+           py::arg("joint_position"))
 
       .def("SetArmControlMode",
            &makermods::metal::MetalSDKInterface::SetArmControlMode,
