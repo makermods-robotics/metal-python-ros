@@ -21,6 +21,11 @@ star_arm_leader:
     startup_sync_step_mm: 1.0
     startup_sync_tolerance_deg: 3.0
     startup_sync_tolerance_mm: 5.0
+    # One Euro filter on servo readings (smooths ~0.1 deg servo quantization).
+    # Filters hard at rest, opens up with speed. min_cutoff <= 0 disables.
+    filter_min_cutoff_hz: 0.5
+    filter_beta: 2.0
+    filter_d_cutoff_hz: 1.0
 
 right_slave_arm:
   ros__parameters:

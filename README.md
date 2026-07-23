@@ -104,7 +104,7 @@ sudo usermod -aG dialout $USER   # only needed once
 ```
 
 Launch the Star Arm leader with a Metal follower on `can0` (bring the CAN interface
-up first, e.g. `scripts/start_can0.sh`):
+up first, e.g. `metal_ros2/can_scripts/start_can0.sh`):
 
 ```bash
 ros2 launch metal_controller star_master_slave.launch.py

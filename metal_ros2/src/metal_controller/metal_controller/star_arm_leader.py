@@ -17,6 +17,7 @@ On startup the node performs a slow sync: commands ramp from the follower's curr
 pose to the leader pose, so the follower never snaps across a large gap.
 """
 import math
+import time
 
 import rclpy
 from rclpy.node import Node
@@ -72,6 +73,45 @@ def _rad_to_stroke_mm(rad: float) -> float:
     return float(_DIST[-1])
 
 
+class OneEuroFilter:
+    """One Euro filter (Casiez et al. 2012) for one signal channel.
+
+    Adaptive low-pass: cutoff = min_cutoff + beta * |velocity|, so it filters hard
+    when the signal is slow (kills servo quantization jitter) and opens up when it
+    moves fast (near-zero added lag). A gap or time reversal (> 0.5 s, dt <= 0)
+    resets the state to the incoming sample.
+    """
+
+    def __init__(self, min_cutoff: float, beta: float, d_cutoff: float):
+        self.min_cutoff = min_cutoff
+        self.beta = beta
+        self.d_cutoff = d_cutoff
+        self.x_prev = None
+        self.dx_prev = 0.0
+        self.t_prev = None
+
+    @staticmethod
+    def _alpha(cutoff: float, dt: float) -> float:
+        tau = 1.0 / (2.0 * math.pi * cutoff)
+        return dt / (dt + tau)
+
+    def update(self, x: float, t: float) -> float:
+        if self.t_prev is None or t <= self.t_prev or t - self.t_prev > 0.5:
+            self.x_prev = x
+            self.dx_prev = 0.0
+            self.t_prev = t
+            return x
+        dt = t - self.t_prev
+        a_d = self._alpha(self.d_cutoff, dt)
+        dx = (x - self.x_prev) / dt
+        self.dx_prev = a_d * dx + (1.0 - a_d) * self.dx_prev
+        cutoff = self.min_cutoff + self.beta * abs(self.dx_prev)
+        a = self._alpha(cutoff, dt)
+        self.x_prev = a * x + (1.0 - a) * self.x_prev
+        self.t_prev = t
+        return self.x_prev
+
+
 class StarArmLeader(Node):
     def __init__(self):
         super().__init__("star_arm_leader_node")
@@ -95,6 +135,10 @@ class StarArmLeader(Node):
         self.declare_parameter("startup_sync_step_mm", 1.0)
         self.declare_parameter("startup_sync_tolerance_deg", 3.0)
         self.declare_parameter("startup_sync_tolerance_mm", 5.0)
+        # One Euro filter on the servo readings; min_cutoff <= 0 disables filtering.
+        self.declare_parameter("filter_min_cutoff_hz", 1.0)
+        self.declare_parameter("filter_beta", 2.0)
+        self.declare_parameter("filter_d_cutoff_hz", 1.0)
 
         self.port = self.get_parameter("port").value
         self.baudrate = self.get_parameter("baudrate").value
@@ -107,6 +151,13 @@ class StarArmLeader(Node):
         self.sync_step_mm = self.get_parameter("startup_sync_step_mm").value
         self.sync_tol_deg = self.get_parameter("startup_sync_tolerance_deg").value
         self.sync_tol_mm = self.get_parameter("startup_sync_tolerance_mm").value
+
+        min_cutoff = self.get_parameter("filter_min_cutoff_hz").value
+        beta = self.get_parameter("filter_beta").value
+        d_cutoff = self.get_parameter("filter_d_cutoff_hz").value
+        self.filters = None
+        if min_cutoff > 0.0:
+            self.filters = [OneEuroFilter(min_cutoff, beta, d_cutoff) for _ in JOINT_NAMES]
 
         n = len(JOINT_NAMES)
         if not (len(self.joint_ids) == len(self.joint_directions) == len(self.range_min) == len(self.range_max) == n):
@@ -182,6 +233,11 @@ class StarArmLeader(Node):
     def timer_callback(self):
         try:
             targets = self.read_leader_targets()
+            if self.filters is not None:
+                now = time.monotonic()
+                targets = [f.update(x, now) for f, x in zip(self.filters, targets)]
+            # Stored post-filter so a failure repeat below reuses the filtered pose
+            # without advancing the filter state.
             self.last_positions = targets
         except Exception as e:
             if self.last_positions is None:
