@@ -6,6 +6,20 @@ This branch targets Ubuntu 22.04 and ROS 2 Humble. The upstream package and bina
 
 The original Chinese README from the imported upstream branch is preserved as `README.zh-CN.md`.
 
+## Quick Start with Drift
+
+You can easily start working with the Metal arm using [Drift](https://godrift.ai) — an
+agentic simulation platform for robotics.
+
+Paste this in your terminal and run to install Drift:
+
+```bash
+curl -fsSL https://godrift.ai/install | bash
+```
+
+From the `/robots` command in the Drift CLI, you can easily preview the Metal arm and
+add it to your workspace.
+
 ## Platform Support
 
 - Ubuntu 22.04 LTS
